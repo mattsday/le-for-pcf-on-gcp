@@ -26,3 +26,18 @@ This is the source code for a Docker image that does the following:
 
 ## Docker Hub
 You can download it on Docker Hub too as `mattsday/le-pcf-on-gcp`
+
+### Running the Docker Image
+Assuming you have the above environment variables set:
+```bash
+docker run \
+  -e GCP_CREDENTIALS="${GCP_CREDENTIALS}" \
+  -e PCF_USER=${PCF_USER} \
+  -e PCF_PASSWD=${PCF_PASSWD} \
+  -e PCF_OPSMGR=${PCF_OPSMGR} \
+  -e LE_EMAIL=${LE_EMAIL} \
+  -e GCP_HTTPS_PROXY=${GCP_HTTPS_PROXY} \
+  -e CF_DOMAINS=${CF_DOMAINS} \
+  mattsday/le-pcf-on-gcp:latest
+```
+
