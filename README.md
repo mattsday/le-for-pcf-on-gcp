@@ -22,6 +22,7 @@ This is the source code for a Docker image that does the following:
 * `LE_SERVER` - Lets Encrypt server (optional) - will default to `https://acme-v02.api.letsencrypt.org/directory`
 * `GCP_CREDENTIALS_FILE` - name of the file to store credentials, defaults to `/accounts.json`
 * `GCP_CERT_NAME` - new name of certificate file in GCP - defaults to an auto generated UUID
+* `GCP_DNS_WAIT` - how long to wait for DNS to propogate - defaults to 120 seconds
 
 ## Docker Hub
 You can download it on Docker Hub too as `mattsday/le-pcf-on-gcp`

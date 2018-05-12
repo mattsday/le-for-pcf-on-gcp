@@ -11,12 +11,14 @@ if [ -z "${PCF_PASSWD}" ]; then echo Please enter your PCF Ops Manager password 
 if [ -z "${GCP_CERT_NAME}" ]; then GCP_CERT_NAME=pcf-cert-$(uuid); echo Setting \$GCP_CERT_NAME to ${GCP_CERT_NAME}; fi
 if [ -z "${GCP_HTTPS_PROXY}" ]; then echo No GCP_HTTPS_PROXY; exit 1; fi
 if [ -z "${OPSMAN_CERT_NAME}" ]; then echo Setting OPSMAN_CERT_NAME to Certificate; OPSMAN_CERT_NAME=Certificate; fi
+if [ -z "${GCP_DNS_WAIT}" ]; then echo Setting DNS Propogation wait timer to 120; GCP_DNS_WAIT=120; fi
 
 echo ${GCP_CREDENTIALS} | tee ${GCP_CREDENTIALS_FILE}
 
 export PATH="$PATH:/google-cloud-sdk/bin"
 
 certbot certonly -n --agree-tos --email ${LE_EMAIL} \
+  --dns-google-propagation-seconds ${GCP_DNS_WAIT} \
   --dns-google --dns-google-credentials ${GCP_CREDENTIALS_FILE} \
   -d ${CF_DOMAINS} \
   --server ${LE_SERVER} \
