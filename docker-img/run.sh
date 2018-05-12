@@ -12,6 +12,8 @@ if [ -z "${GCP_CERT_NAME}" ]; then GCP_CERT_NAME=pcf-cert-$(uuid); echo Setting 
 if [ -z "${GCP_HTTPS_PROXY}" ]; then echo No GCP_HTTPS_PROXY; exit 1; fi
 if [ -z "${OPSMAN_CERT_NAME}" ]; then echo Setting OPSMAN_CERT_NAME to Certificate; OPSMAN_CERT_NAME=Certificate; fi
 
+echo ${GCP_CREDENTIALS} | tee ${GCP_CREDENTIALS_FILE}
+
 certbot certonly -n --agree-tos --email ${LE_EMAIL} \
   --dns-google --dns-google-credentials ${GCP_CREDENTIALS_FILE} \
   -d ${CF_DOMAINS} \

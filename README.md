@@ -1,5 +1,5 @@
-# Lets Encrypt updater for PCF and GCP
-This script:
+# Letsencrypt for PCF on GCP
+This is the source code for a Docker image that does the following:
 
 1. Requests a new certificate from Letsencrypt
 2. Applies it to the GCP load balancer
@@ -23,3 +23,5 @@ This script:
 * `GCP_CREDENTIALS_FILE` - name of the file to store credentials, defaults to `/accounts.json`
 * `GCP_CERT_NAME` - new name of certificate file in GCP - defaults to an auto generated UUID
 
+## Docker Hub
+You can download it on Docker Hub too as `mattsday/le-pcf-on-gcp`
