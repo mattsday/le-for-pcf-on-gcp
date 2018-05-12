@@ -14,6 +14,8 @@ if [ -z "${OPSMAN_CERT_NAME}" ]; then echo Setting OPSMAN_CERT_NAME to Certifica
 
 echo ${GCP_CREDENTIALS} | tee ${GCP_CREDENTIALS_FILE}
 
+export PATH="$PATH:/google-cloud-sdk/bin"
+
 certbot certonly -n --agree-tos --email ${LE_EMAIL} \
   --dns-google --dns-google-credentials ${GCP_CREDENTIALS_FILE} \
   -d ${CF_DOMAINS} \
@@ -44,7 +46,6 @@ if [ $? -ne 0 ]; then
 	exit 1;
 fi
 
-# Skip for now
 gcloud compute ssl-certificates create ${GCP_CERT_NAME} --certificate=${PUB_CERT} --private-key=${PRIV_KEY} --description="Letsencrypt cert updated $(date)"
 gcloud compute target-https-proxies update ${GCP_HTTPS_PROXY} --ssl-certificates=${GCP_CERT_NAME}
 
