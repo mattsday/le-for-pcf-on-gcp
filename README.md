@@ -23,6 +23,7 @@ This is the source code for a Docker image that does the following:
 * `GCP_CREDENTIALS_FILE` - name of the file to store credentials, defaults to `/accounts.json`
 * `GCP_CERT_NAME` - new name of certificate file in GCP - defaults to an auto generated UUID
 * `GCP_DNS_WAIT` - how long to wait for DNS to propogate - defaults to 120 seconds
+* `CERT_RENEW_BEFORE` - number of seconds the certificate may have left before renewing - defaults to 7 days (`604800`)
 
 ## Docker Hub
 You can download it on Docker Hub too as `mattsday/le-pcf-on-gcp`
