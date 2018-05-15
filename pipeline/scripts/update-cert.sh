@@ -1,1 +1,1 @@
-/Users/matt/Desktop/letsencrypt-update-for-pcf-and-gcp/docker-img/run.sh
+../../docker-img/run.sh
