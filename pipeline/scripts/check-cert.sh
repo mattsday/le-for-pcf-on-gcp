@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -x
-
 if [ -z "${GCP_CREDENTIALS}" ]; then echo No GCP_CREDENTIALS; exit 1; fi
 if [ -z "${GCP_CREDENTIALS_FILE}" ]; then export GCP_CREDENTIALS_FILE="/accounts.json"; fi
 if [ -z "${GCP_HTTPS_PROXY}" ]; then echo No GCP_HTTPS_PROXY; exit 1; fi
@@ -34,8 +32,8 @@ echo "$CERT" | openssl x509 -enddate -noout | awk -F= '{print $2}'
 echo "$CERT" | openssl x509 -checkend ${CERT_RENEW_BEFORE} -noout
 if [ $? = 1 ]; then
 	echo Certificate due to expire - continue pipeline
-	# Continue pipeline
 else
 	echo Certificate not due to expire
+	exit 1
 fi
 

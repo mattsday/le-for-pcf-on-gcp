@@ -1,6 +1,6 @@
 ---
 jobs:
-- name: check-cert
+- name: check-cert-needs-renewal
   plan:
   - get: git-pipeline
   - task: check-cert
