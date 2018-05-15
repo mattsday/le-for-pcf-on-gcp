@@ -18,4 +18,4 @@ params:
   CERT_RENEW_BEFORE:
 
 run:
-	path: pipeline/scripts/check-cert.sh
+  path: pipeline/scripts/check-cert.sh
