@@ -26,6 +26,7 @@ fi
 
 CERT=$(gcloud compute ssl-certificates describe ${CERT_NAME} --format='get(certificate)')
 
+echo Date: $(date)
 echo Expiry date: $(echo "$CERT" | openssl x509 -enddate -noout | awk -F= '{print $2}')
 
 echo "$CERT" | openssl x509 -checkend ${CERT_RENEW_BEFORE} -noout >/dev/null
