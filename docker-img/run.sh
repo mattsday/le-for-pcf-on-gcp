@@ -42,6 +42,7 @@ PUB_CERT=/etc/letsencrypt/live/le/fullchain.pem
 PRIV_KEY=/etc/letsencrypt/live/le/privkey.pem
 
 if [ ${SKIP_GCP_CERT} = false ]; then
+	echo Updating Google Load Balancer Certificate
 	# Create cert in GCP
 	gcloud auth activate-service-account --key-file=${GCP_CREDENTIALS_FILE}
 
@@ -52,8 +53,10 @@ if [ ${SKIP_GCP_CERT} = false ]; then
 
 	gcloud compute ssl-certificates create ${GCP_CERT_NAME} --certificate=${PUB_CERT} --private-key=${PRIV_KEY} --description="Letsencrypt cert updated $(date)"
 	gcloud compute target-https-proxies update ${GCP_HTTPS_PROXY} --ssl-certificates=${GCP_CERT_NAME}
-fi
+else
+	echo Skipping updating Google Load Balancer Certificate
 
+fi
 format_cert() {
 	echo ${1//$'\n'/'\n'}
 }
@@ -62,6 +65,7 @@ FULL_CHAIN=$(format_cert "$(cat ${PUB_CERT})")
 PRIV_KEY=$(format_cert "$(cat ${PRIV_KEY})")
 
 if [ ${SKIP_PAS_CERT} = false ]; then
+	echo Updating PAS Certificate
 	CF_JSON=$(echo "{
 		\".properties.networking_poe_ssl_certs\": {
 		    \"value\": [{
@@ -74,9 +78,12 @@ if [ ${SKIP_PAS_CERT} = false ]; then
 		}
 	}" | jq -c -M '.')
 	om -k -u "${PCF_USER}" -p "${PCF_PASSWD}" -t "${PCF_OPSMGR}" configure-product --product-name cf -p "${CF_JSON}"
+else
+	echo Skipping updating PAS Certificate
 fi
 
 if [ ${SKIP_HARBOR_CERT} = false ]; then
+	echo Updating Harbor Certificate
 	HARBOR_JSON=$(echo "{
 		\".properties.server_cert_key\": {
 		    \"value\": {
@@ -87,9 +94,12 @@ if [ ${SKIP_HARBOR_CERT} = false ]; then
 	}" | jq -c -M '.')
 	
 	om -k -u "${PCF_USER}" -p "${PCF_PASSWD}" -t "${PCF_OPSMGR}" configure-product --product-name harbor-container-registry -p "${HARBOR_JSON}"
+else
+	echo Skipping updating Harbor Certificate
 fi
 
 if [ ${SKIP_PKS_CERT} = false ]; then
+	echo Updating PKS Certificate
 	PKS_JSON=$(echo "{
 		\".pivotal-container-service.pks_tls\": {
 		    \"value\": {
@@ -100,8 +110,13 @@ if [ ${SKIP_PKS_CERT} = false ]; then
 	}" | jq -c -M '.')
 	
 	om -k -u "${PCF_USER}" -p "${PCF_PASSWD}" -t "${PCF_OPSMGR}" configure-product --product-name pivotal-container-service -p "${PKS_JSON}"
+else
+	echo Skipping updating PKS Certificate
 fi
 
 if [ ${SKIP_OPSMAN_APPLY} = false ]; then
+	echo Applying ops manager changes
 	om -k -u "${PCF_USER}" -p "${PCF_PASSWD}" -t "${PCF_OPSMGR}" apply-changes
+else
+	echo Skipping applying ops manager changes
 fi
