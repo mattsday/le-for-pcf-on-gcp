@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 if [ -z "${GCP_CREDENTIALS}" ]; then echo No GCP_CREDENTIALS; exit 1; fi
 if [ -z "${CF_DOMAINS}" ]; then echo No CF_DOMAINS; exit 1; fi
 if [ -z "${LE_EMAIL}" ]; then echo No LE_EMAIL; exit 1; fi
@@ -21,6 +23,8 @@ if [ -z "${SKIP_OPSMAN_APPLY}" ]; then echo Applying changes in ops manager by d
 echo ${GCP_CREDENTIALS} | tee ${GCP_CREDENTIALS_FILE} >/dev/null
 
 export PATH="$PATH:/google-cloud-sdk/bin"
+
+echo Generating certificate
 
 certbot certonly -n --agree-tos --email ${LE_EMAIL} \
   --dns-google-propagation-seconds ${GCP_DNS_WAIT} \
