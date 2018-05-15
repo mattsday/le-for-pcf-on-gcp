@@ -24,6 +24,7 @@ jobs:
       GCP_HTTPS_PROXY: {{GCP_HTTPS_PROXY}}
       CF_DOMAINS: {{CF_DOMAINS}}
       LE_SERVER: {{LE_SERVER}}
+      LE_EMAIL: {{LE_EMAIL}}
       PCF_USER: {{PCF_USER}}
       PCF_OPSMGR: {{PCF_OPSMGR}}
       PCF_PASSWD: {{PCF_PASSWD}}
