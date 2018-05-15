@@ -15,6 +15,7 @@ if [ -z "${GCP_DNS_WAIT}" ]; then echo Setting DNS Propogation wait timer to 120
 if [ -z "${SKIP_PAS_CERT}" ]; then echo Updating PAS Certificate by default; SKIP_PAS_CERT=false; fi
 if [ -z "${SKIP_PKS_CERT}" ]; then echo Updating PKS Certificate by default; SKIP_PKS_CERT=false; fi
 if [ -z "${SKIP_HARBOR_CERT}" ]; then echo Updating Harbor Certificate by default; SKIP_HARBOR_CERT=false; fi
+if [ -z "${SKIP_GCP_CERT}" ]; then echo Updating GCP Certificate by default; SKIP_GCP_CERT=false; fi
 if [ -z "${SKIP_OPSMAN_APPLY}" ]; then echo Applying changes in ops manager by default; SKIP_OPSMAN_APPLY=false fi
 
 echo ${GCP_CREDENTIALS} | tee ${GCP_CREDENTIALS_FILE} >/dev/null
@@ -38,17 +39,18 @@ fi
 PUB_CERT=/etc/letsencrypt/live/le/fullchain.pem
 PRIV_KEY=/etc/letsencrypt/live/le/privkey.pem
 
-# Create cert in GCP
-gcloud auth activate-service-account --key-file=${GCP_CREDENTIALS_FILE}
+if [ ${SKIP_GCP_CERT} = false ]; then
+	# Create cert in GCP
+	gcloud auth activate-service-account --key-file=${GCP_CREDENTIALS_FILE}
 
-if [ $? -ne 0 ]; then
-	echo Logging in to GCP failed
-	exit 1;
+	if [ $? -ne 0 ]; then
+		echo Logging in to GCP failed
+		exit 1;
+	fi
+
+	gcloud compute ssl-certificates create ${GCP_CERT_NAME} --certificate=${PUB_CERT} --private-key=${PRIV_KEY} --description="Letsencrypt cert updated $(date)"
+	gcloud compute target-https-proxies update ${GCP_HTTPS_PROXY} --ssl-certificates=${GCP_CERT_NAME}
 fi
-
-gcloud compute ssl-certificates create ${GCP_CERT_NAME} --certificate=${PUB_CERT} --private-key=${PRIV_KEY} --description="Letsencrypt cert updated $(date)"
-gcloud compute target-https-proxies update ${GCP_HTTPS_PROXY} --ssl-certificates=${GCP_CERT_NAME}
-
 
 format_cert() {
 	echo ${1//$'\n'/'\n'}

@@ -11,6 +11,29 @@ jobs:
       GCP_CREDENTIALS: {{GCP_CREDENTIALS}}
       GCP_HTTPS_PROXY: {{GCP_HTTPS_PROXY}}
       CERT_RENEW_BEFORE: {{CERT_RENEW_BEFORE}}
+- name: update-old-certificate
+  plan:
+  - get: git-pipeline
+    passed:
+    - check-cert-needs-renewal
+  - task: update-cert
+    file: git-pipeline/pipeline/tasks/update-cert.yml
+    params:
+      GCP_CREDENTIALS: {{GCP_CREDENTIALS}}
+      GCP_HTTPS_PROXY: {{GCP_HTTPS_PROXY}}
+      CF_DOMAINS: {{CF_DOMAINS}}
+      LE_SERVER: {{LE_SERVER}}
+      PCF_USER: {{PCF_USER}}
+      PCF_OPSMGR: {{PCF_OPSMGR}}
+      PCF_PASSWD: {{PCF_PASSWD}}
+      GCP_CERT_NAME: {{GCP_CERT_NAME}}
+      GCP_HTTPS_PROXY: {{GCP_HTTPS_PROXY}}
+      OPSMAN_CERT_NAME: {{OPSMAN_CERT_NAME}}
+      GCP_DNS_WAIT: {{GCP_DNS_WAIT}}
+      SKIP_PAS_CERT: {{SKIP_PAS_CERT}}
+      SKIP_PKS_CERT: {{SKIP_PKS_CERT}}
+      SKIP_HARBOR_CERT: {{SKIP_HARBOR_CERT}}
+      SKIP_OPSMAN_APPLY: {{SKIP_OPSMAN_APPLY}} 
 resources:
 - name: git-pipeline
   type: git

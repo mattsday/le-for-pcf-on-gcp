@@ -8,11 +8,27 @@ image_resource:
     tag: "latest"
 
 inputs:
-- name: git-assets
+- name: git-pipeline
 
 outputs:
 - name: app-info
 
 run:
-	path: git-assets/pipeline/scripts/update-cert.sh
+  path: git-pipeline/pipeline/scripts/update-cert.sh
 
+params:
+  GCP_CREDENTIALS:
+  GCP_HTTPS_PROXY:
+  CF_DOMAINS:
+  LE_SERVER: 
+  PCF_USER:
+  PCF_OPSMGR: 
+  PCF_PASSWD: 
+  GCP_CERT_NAME: 
+  GCP_HTTPS_PROXY: 
+  OPSMAN_CERT_NAME: 
+  GCP_DNS_WAIT: 
+  SKIP_PAS_CERT: 
+  SKIP_PKS_CERT: 
+  SKIP_HARBOR_CERT:
+  SKIP_OPSMAN_APPLY:
