@@ -14,6 +14,7 @@ jobs:
 - name: update-old-certificate
   plan:
   - get: git-pipeline
+    trigger: true
     passed:
     - check-cert-needs-renewal
   - task: update-cert
