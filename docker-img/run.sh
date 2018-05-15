@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -x
-
 if [ -z "${GCP_CREDENTIALS}" ]; then echo No GCP_CREDENTIALS; exit 1; fi
 if [ -z "${CF_DOMAINS}" ]; then echo No CF_DOMAINS; exit 1; fi
 if [ -z "${LE_EMAIL}" ]; then echo No LE_EMAIL; exit 1; fi
@@ -18,7 +16,7 @@ if [ -z "${SKIP_PAS_CERT}" ]; then echo Updating PAS Certificate by default; SKI
 if [ -z "${SKIP_PKS_CERT}" ]; then echo Updating PKS Certificate by default; SKIP_PKS_CERT=false; fi
 if [ -z "${SKIP_HARBOR_CERT}" ]; then echo Updating Harbor Certificate by default; SKIP_HARBOR_CERT=false; fi
 if [ -z "${SKIP_GCP_CERT}" ]; then echo Updating GCP Certificate by default; SKIP_GCP_CERT=false; fi
-if [ -z "${SKIP_OPSMAN_APPLY}" ]; then echo Applying changes in ops manager by default; SKIP_OPSMAN_APPLY=false fi
+if [ -z "${SKIP_OPSMAN_APPLY}" ]; then echo Applying changes in ops manager by default; SKIP_OPSMAN_APPLY=false; fi
 
 echo ${GCP_CREDENTIALS} | tee ${GCP_CREDENTIALS_FILE} >/dev/null
 
