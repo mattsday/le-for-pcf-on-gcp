@@ -17,6 +17,10 @@ This is the source code for a Docker image that does the following:
 * `GCP_HTTPS_PROXY` - GCP Proxy to update - run `gcloud compute target-https-proxies list` to get this information
 
 #### Optional input variables
+* `SKIP_PAS_CERT` - skip updating the PCF PAS certificate - defaults to `false`
+* `SKIP_PKS_CERT` - skip updating the PKS certificate - defaults to `false`
+* `SKIP_HARBOR_CERT` - skip updating the VMware Harbor certificate - defaults to `false`
+* `SKIP_OPSMAN_APPLY` - skip applying the changes in Ops Manager - defaults to `false`
 * `PCF_USER` - ops manager username - defaults to `admin`
 * `OPSMAN_CERT_NAME` - name of certificate in ops manager - defaults to `Certificate`
 * `LE_SERVER` - Lets Encrypt server (optional) - will default to `https://acme-v02.api.letsencrypt.org/directory`

@@ -12,6 +12,10 @@ if [ -z "${GCP_CERT_NAME}" ]; then GCP_CERT_NAME=pcf-cert-$(uuid); echo Setting 
 if [ -z "${GCP_HTTPS_PROXY}" ]; then echo No GCP_HTTPS_PROXY; exit 1; fi
 if [ -z "${OPSMAN_CERT_NAME}" ]; then echo Setting OPSMAN_CERT_NAME to Certificate; OPSMAN_CERT_NAME=Certificate; fi
 if [ -z "${GCP_DNS_WAIT}" ]; then echo Setting DNS Propogation wait timer to 120; GCP_DNS_WAIT=120; fi
+if [ -z "${SKIP_PAS_CERT}" ]; then echo Updating PAS Certificate by default; SKIP_PAS_CERT=false; fi
+if [ -z "${SKIP_PKS_CERT}" ]; then echo Updating PKS Certificate by default; SKIP_PKS_CERT=false; fi
+if [ -z "${SKIP_HARBOR_CERT}" ]; then echo Updating Harbor Certificate by default; SKIP_HARBOR_CERT=false; fi
+if [ -z "${SKIP_OPSMAN_APPLY}" ]; then echo Applying changes in ops manager by default; SKIP_OPSMAN_APPLY=false fi
 
 echo ${GCP_CREDENTIALS} | tee ${GCP_CREDENTIALS_FILE} >/dev/null
 
@@ -59,41 +63,47 @@ format_cert() {
 FULL_CHAIN=$(format_cert "$(cat ${PUB_CERT})")
 PRIV_KEY=$(format_cert "$(cat ${PRIV_KEY})")
 
-# Generate JSON for Harbor, CF and PKS
-CF_JSON=$(echo "{
-	\".properties.networking_poe_ssl_certs\": {
-	    \"value\": [{
-			\"certificate\": {
+if [ ${SKIP_PAS_CERT} = false ]; then
+	CF_JSON=$(echo "{
+		\".properties.networking_poe_ssl_certs\": {
+		    \"value\": [{
+				\"certificate\": {
+					\"cert_pem\": \"${FULL_CHAIN}\",
+					\"private_key_pem\": \"${PRIV_KEY}\"
+				},
+				\"name\": \"${OPSMAN_CERT_NAME}\"
+			}]
+		}
+	}" | jq -c -M '.')
+	om -k -u "${PCF_USER}" -p "${PCF_PASSWD}" -t "${PCF_OPSMGR}" configure-product --product-name cf -p "${CF_JSON}"
+fi
+
+if [ ${SKIP_HARBOR_CERT} = false ]; then
+	HARBOR_JSON=$(echo "{
+		\".properties.server_cert_key\": {
+		    \"value\": {
 				\"cert_pem\": \"${FULL_CHAIN}\",
 				\"private_key_pem\": \"${PRIV_KEY}\"
-			},
-			\"name\": \"${OPSMAN_CERT_NAME}\"
-		}]
-	}
-}" | jq -c -M '.')
-
-om -k -u "${PCF_USER}" -p "${PCF_PASSWD}" -t "${PCF_OPSMGR}" configure-product --product-name cf -p "${CF_JSON}"
-
-HARBOR_JSON=$(echo "{
-	\".properties.server_cert_key\": {
-	    \"value\": {
-			\"cert_pem\": \"${FULL_CHAIN}\",
-			\"private_key_pem\": \"${PRIV_KEY}\"
+			}
 		}
-	}
-}" | jq -c -M '.')
+	}" | jq -c -M '.')
+	
+	om -k -u "${PCF_USER}" -p "${PCF_PASSWD}" -t "${PCF_OPSMGR}" configure-product --product-name harbor-container-registry -p "${HARBOR_JSON}"
+fi
 
-om -k -u "${PCF_USER}" -p "${PCF_PASSWD}" -t "${PCF_OPSMGR}" configure-product --product-name harbor-container-registry -p "${HARBOR_JSON}"
-
-PKS_JSON=$(echo "{
-	\".pivotal-container-service.pks_tls\": {
-	    \"value\": {
-			\"cert_pem\": \"${FULL_CHAIN}\",
-			\"private_key_pem\": \"${PRIV_KEY}\"
+if [ ${SKIP_PKS_CERT} = false ]; then
+	PKS_JSON=$(echo "{
+		\".pivotal-container-service.pks_tls\": {
+		    \"value\": {
+				\"cert_pem\": \"${FULL_CHAIN}\",
+				\"private_key_pem\": \"${PRIV_KEY}\"
+			}
 		}
-	}
-}" | jq -c -M '.')
+	}" | jq -c -M '.')
+	
+	om -k -u "${PCF_USER}" -p "${PCF_PASSWD}" -t "${PCF_OPSMGR}" configure-product --product-name pivotal-container-service -p "${PKS_JSON}"
+fi
 
-om -k -u "${PCF_USER}" -p "${PCF_PASSWD}" -t "${PCF_OPSMGR}" configure-product --product-name pivotal-container-service -p "${PKS_JSON}"
-
-om -k -u "${PCF_USER}" -p "${PCF_PASSWD}" -t "${PCF_OPSMGR}" apply-changes
+if [ ${SKIP_OPSMAN_APPLY} = false ]; then
+	om -k -u "${PCF_USER}" -p "${PCF_PASSWD}" -t "${PCF_OPSMGR}" apply-changes
+fi
