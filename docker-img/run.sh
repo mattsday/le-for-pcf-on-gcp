@@ -35,12 +35,6 @@ if [ ! -f "/etc/letsencrypt/live/le/fullchain.pem" ] || \
 	exit 1
 fi
 
-if [ ! -f "/etc/letsencrypt/live/le/fullchain.pem" ] || \
-   [ ! -f "/etc/letsencrypt/live/le/privkey.pem" ]; then
-	echo Cannot find certificates in /etc/letsencrypt/live/le/
-	exit 1
-fi
-
 PUB_CERT=/etc/letsencrypt/live/le/fullchain.pem
 PRIV_KEY=/etc/letsencrypt/live/le/privkey.pem
 

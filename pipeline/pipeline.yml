@@ -1,0 +1,18 @@
+---
+jobs:
+- name: check-cert
+  plan:
+  - get: git-pipeline
+  - task: check-cert
+    file: git-pipeline/pipeline/tasks/check-cert.yml
+    params:
+      GCP_CREDENTIALS: {{GCP_CREDENTIALS}}
+      GCP_HTTPS_PROXY: {{GCP_HTTPS_PROXY}}
+      CERT_RENEW_BEFORE: {{CERT_RENEW_BEFORE}}
+
+resources:
+- name: git-pipeline
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/mattsday/le-for-pcf-on-gcp

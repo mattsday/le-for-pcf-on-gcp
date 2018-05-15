@@ -14,7 +14,7 @@ inputs:
 #- name: app-info
 
 run:
-	path: git-pipeline/pipeline/scripts/check-cert.sh
+	path: pipeline/scripts/check-cert.sh
 
 params:
   GCP_CREDENTIALS:
