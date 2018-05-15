@@ -26,14 +26,12 @@ fi
 
 CERT=$(gcloud compute ssl-certificates describe ${CERT_NAME} --format='get(certificate)')
 
-echo Expiry date:
-echo "$CERT" | openssl x509 -enddate -noout | awk -F= '{print $2}'
+echo Expiry date: $(echo "$CERT" | openssl x509 -enddate -noout | awk -F= '{print $2}')
 
-echo "$CERT" | openssl x509 -checkend ${CERT_RENEW_BEFORE} -noout
+echo "$CERT" | openssl x509 -checkend ${CERT_RENEW_BEFORE} -noout >/dev/null
 if [ $? = 1 ]; then
-	echo Certificate due to expire - continue pipeline
-else
-	echo Certificate not due to expire
-	exit 1
+	echo Certificate due to expire
+	exit 0
 fi
-
+echo Certificate not due to expire
+exit 1
