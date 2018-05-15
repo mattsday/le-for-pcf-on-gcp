@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -xeu
+
 if [ -z "${GCP_CREDENTIALS}" ]; then echo No GCP_CREDENTIALS; exit 1; fi
 if [ -z "${GCP_CREDENTIALS_FILE}" ]; then export GCP_CREDENTIALS_FILE="/accounts.json"; fi
 if [ -z "${GCP_HTTPS_PROXY}" ]; then echo No GCP_HTTPS_PROXY; exit 1; fi
@@ -8,8 +10,15 @@ if [ -z "${CERT_RENEW_BEFORE}" ]; then echo Setting cert renewall to 7 days; CER
 echo ${GCP_CREDENTIALS} | tee ${GCP_CREDENTIALS_FILE} >/dev/null
 export PATH="$PATH:/google-cloud-sdk/bin"
 
-# Get current certificate name
+# Login to GCP
+gcloud auth activate-service-account --key-file=${GCP_CREDENTIALS_FILE}
 
+if [ $? -ne 0 ]; then
+	echo Logging in to GCP failed
+	exit 1;
+fi
+
+# Get current certificate name
 CERT_NAME=$(gcloud compute target-https-proxies describe ${GCP_HTTPS_PROXY} --format=json | jq '.sslCertificates[0]' | xargs basename)
 
 if [ -z ${CERT_NAME} ]; then
