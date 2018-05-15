@@ -12,11 +12,10 @@ inputs:
 
 #outputs:
 #- name: app-info
-
-run:
-	path: pipeline/scripts/check-cert.sh
-
 params:
   GCP_CREDENTIALS:
   GCP_HTTPS_PROXY: 
   CERT_RENEW_BEFORE:
+
+run:
+	path: pipeline/scripts/check-cert.sh
